@@ -1,0 +1,4 @@
+{
+  "_how_to": "Add each direct booking as {\"start\": \"check-in date\", \"end\": \"checkout date\"} using YYYY-MM-DD, for example {\"start\": \"2027-02-12\", \"end\": \"2027-02-15\"}. This file is public on your website, so leave guest names out.",
+  "bookings": []
+}
