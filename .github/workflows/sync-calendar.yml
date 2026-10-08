@@ -1,0 +1,33 @@
+name: Sync Airbnb + VRBO calendars
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+  push:
+    paths: ["direct-bookings.json"]
+
+permissions:
+  contents: write
+
+concurrency: calendar-sync
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pull calendars
+        run: node sync-availability.mjs
+        env:
+          AIRBNB_ICAL_URL: ${{ secrets.AIRBNB_ICAL_URL }}
+          VRBO_ICAL_URL: ${{ secrets.VRBO_ICAL_URL }}
+      - name: Save changes
+        run: |
+          git config user.name "calendar-sync"
+          git config user.email "calendar-sync@users.noreply.github.com"
+          git add availability.json calendar.ics
+          git diff --cached --quiet || (git commit -m "Update availability" && git push)
